@@ -1,39 +1,44 @@
-import RickAndMortyService from './service';
+import RickAndMortyService from './service.js';
+import heartSVG from './assets/heart.svg'
+import liveSVG from './assets/live.svg'
+import raceSVG from './assets/race.svg'
+import planetSVG from './assets/planet.svg'
 
+const service = new RickAndMortyService();
 
-// acá deberás crear una instancia del servicio RickAndMortyService
-// const service = new RickAndMortyService();
+async function createCharacterList() {
+    const container = document.querySelector('.character-list'); 
 
-// esta función debe encargarse de obtener el elemento contenedor
-// y agregar los personajes obtenidos por el API, deberás llamar tu función getAllCharacters
-// iterar el arreglo de personajes y llamar a la función createCharacterCard para agregar cada personaje
-// a el contenedor puedes usar la propiedad innerHTML para esto
+    const characters = await service.getAllCharacters();
 
-
-function createCharacterList() {
-    // llamar primero createCharacterCard(character);
-    // llamar segundo addCharacterListeners(character);
+    characters.forEach(character => {
+        const characterCard = createCharacterCard(character);
+        container.insertAdjacentHTML('beforeend', characterCard);
+    });
 }
 
-// esta función debe devolver la estructura html en string de tu personaje ejemplo
+function createCharacterCard(character) {
+    return `
+        <div class="character-card">
+            <img src="${character.image}" alt="${character.name}">
+            <img src="${heartSVG}" class="heart-icon" id="heart" data-name="${character.name}">
+            <div class="character-info">
+                <p id="nombre">${character.name}</p>
+                <p><img src="${liveSVG}" class="icon">${character.status}</p>
+                <p><img src="${raceSVG}" class="icon">${character.species}</p>
+                <p><img src="${planetSVG}" class="icon">${character.location}</p>
+            </div>
+        </div>
+    `;
+}
 
-// `<div class="character">
-//      <span>${gender}</span>
-//      <span>${name}</span>
-// </div>`;
+function addCharacterListeners() {
+    document.querySelectorAll('.heart-icon').forEach(heartIcon => {
+        heartIcon.addEventListener('click', () => {
+            const characterName = heartIcon.getAttribute('data-name');
+            alert(`Hola soy ${characterName}, recuerda que puedes obtener más información sobre mí!`);
+        });
+    });
+}
 
-// deberás usar los elementos correctos de HTML para poder visualizar el personaje
-
-
-function createCharacterCard(character) {}
-
-// esta función deberá obtener todos los personajes y deberá agregarles un evento de click en el icono de corazon
-// cuando se haga click al icono de corazon aparecer una alerta con un mensaje 
-// que diga Hola soy (nombre personaje), recuerda que puedes obtener
-// el elemento target de un evento y así obtener sus propiedades
-
-function addCharacterListeners(character) {}
-
-
-// por último se llama la función y se renderiza la vista
-createCharacterList();
+createCharacterList().then(addCharacterListeners);
